@@ -1,37 +1,34 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
-using TMPro;
-using UnityEditor.Build.Content;
 using UnityEngine;
-using UnityEngine.SceneManagement;
-using UnityEngine.UI;
+using TMPro;
 
 public class UIGame : MonoBehaviour
 {
     [Header("References")]
     [SerializeField] GameObject Ball;
     [SerializeField] GameObject PauseMenu;
+    [SerializeField] private PlayerMovement playerMovement;
     [SerializeField] private GameManager GameManager;
+    [SerializeField] private GameSettings GameSettings;
+    [SerializeField] private Player1Zone Player1Zone;
+    [SerializeField] private Player2Zone Player2Zone;
+
     [Header("On Screen UI")]
     [Header("Scores")]
     [SerializeField] private TextMeshProUGUI playerScored;
     [SerializeField] private TextMeshProUGUI player1Score;
     [SerializeField] private TextMeshProUGUI player2Score;
-    [SerializeField] public int winningScore;
     [SerializeField] private TextMeshProUGUI winText;
-    [Header("Time")]
     [SerializeField] private TextMeshProUGUI time;
-    [SerializeField] public float setTime;
 
     [NonSerialized] public float player1ScoreCounter;
     [NonSerialized] public float player2ScoreCounter;
-    [NonSerialized] public int intTime;
+    [NonSerialized] public bool justScored;
 
     private UIPauseMenu pauseMenu;
     private GameManager gameManager;
+    private float globalTime;
 
     private void Awake()
     {
@@ -39,7 +36,8 @@ public class UIGame : MonoBehaviour
         gameManager = GameManager.GetComponent<GameManager>();
 
         // Inicializa tiempo
-        time.text = setTime.ToString();
+        globalTime = GameSettings.timeUntilGameEnd;
+        time.text = globalTime.ToString();
 
         player1Score.text = "0";
         player2Score.text = "0";
@@ -50,38 +48,55 @@ public class UIGame : MonoBehaviour
 
     // Update is called once per frame
     void Update()
-    {
+    {   
         UpdateTime();
-        PlayerWins();
     }
 
     public void UpdateScoreP2()
     {
         player2ScoreCounter += 1;
         player2Score.text = player2ScoreCounter.ToString();
-
-        playerScored.text = "Player 2 Scored";
-        playerScored.gameObject.SetActive(true);
-        StartCoroutine(ScorePause(3));
+        if (player2ScoreCounter >= GameSettings.score)
+        {
+            winText.gameObject.SetActive(true);
+            winText.text = "Player 2 Wins!";
+            StartCoroutine(EndGamePause(3));
+        }
+        else
+        {
+            playerScored.text = "Player 2 Scored";
+            playerScored.gameObject.SetActive(true);
+            playerMovement.PlayerScored();
+            StartCoroutine(ScorePause(3));
+        }
     }
 
     public void UpdateScoreP1()
     {
         player1ScoreCounter += 1;
         player1Score.text = player1ScoreCounter.ToString();
-
-        playerScored.text = "Player 1 Scored";
-        playerScored.gameObject.SetActive(true);
-        StartCoroutine(ScorePause(3));
+        if (player1ScoreCounter >= GameSettings.score)
+        {
+            winText.gameObject.SetActive(true);
+            winText.text = "Player 1 Wins!";
+            StartCoroutine(EndGamePause(3));
+        }
+        else
+        {
+            playerScored.text = "Player 1 Scored";
+            playerScored.gameObject.SetActive(true);
+            playerMovement.PlayerScored();
+            StartCoroutine(ScorePause(3));
+        }
     }
     private void UpdateTime()
     {
         if (!pauseMenu.isPause)
         {
-            setTime -= Time.deltaTime;
-            time.text = setTime.ToString("0");
+            globalTime -= Time.deltaTime;
+            time.text = globalTime.ToString("0");
 
-            if (setTime <= 0.0f)
+            if (globalTime <= 0.0f)
             {
                 TimeOut();
             }
@@ -95,7 +110,7 @@ public class UIGame : MonoBehaviour
         {
             winText.text = "Player 1 Wins!";
         }
-        else
+        else if (player1ScoreCounter < player2ScoreCounter)
         {
             winText.text = "Player 2 Wins!";
         }
@@ -107,30 +122,15 @@ public class UIGame : MonoBehaviour
 
     }
 
-
-    private void PlayerWins()
+    public IEnumerator ScorePause(float seconds)
     {
-        if (player1ScoreCounter == winningScore || player2ScoreCounter == winningScore)
-        {
-            if (player1ScoreCounter == winningScore)
-            {
-                winText.text = "Player 1 Wwins!";
-            }
-            else
-            {
-                winText.text = "Player 2 Wins!";
-            }
-            StartCoroutine(EndGamePause(3));
-        }
-    }
-
-    private IEnumerator ScorePause(float seconds)
-    {
+        justScored = true;
         Time.timeScale = 0f;
         yield return new WaitForSecondsRealtime(seconds);
         Time.timeScale = 1f;
 
         playerScored.gameObject.SetActive(false);
+        justScored = false;
     }
     private IEnumerator EndGamePause(float seconds)
     {

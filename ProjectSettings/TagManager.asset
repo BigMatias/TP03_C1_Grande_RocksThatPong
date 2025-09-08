@@ -7,16 +7,18 @@ TagManager:
   - Player 1 Goal
   - Player 2 Goal
   - Ball
+  - Obstacle
+  - ScreenEdges
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - Player
+  - 
   - Water
   - UI
   - 
-  - 
-  - 
+  - Ball
+  - Player
   - 
   - 
   - 

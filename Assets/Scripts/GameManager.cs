@@ -1,8 +1,6 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using static UnityEditor.Experimental.GraphView.GraphView;
 
 public class GameManager : MonoBehaviour
 {
@@ -10,6 +8,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] GameObject Ball;
     [SerializeField] GameObject Player1;
     [SerializeField] GameObject Player2;
+    [SerializeField] PowerUpMoreSize MoreSize;
+    [SerializeField] PowerUpDefense Defense;
 
     private Rigidbody2D ballRb;
     private SpriteRenderer ballSprite;
@@ -19,7 +19,8 @@ public class GameManager : MonoBehaviour
     {
         Time.timeScale = 1;
         ballRb = Ball.GetComponent<Rigidbody2D>();    
-        ballSprite = Ball.GetComponent<SpriteRenderer>();    
+        ballSprite = Ball.GetComponent<SpriteRenderer>();
+
     }
 
     public void PauseGameForSeconds(float secondsToPause)
@@ -89,6 +90,7 @@ public class GameManager : MonoBehaviour
     private IEnumerator WaitAndReturnNormalSize(float seconds, float addedHeight)
     {
         yield return new WaitForSeconds(seconds);
+
         Player1.transform.localScale -= new Vector3(0, addedHeight, 0); ;
         Player2.transform.localScale -= new Vector3(0, addedHeight, 0); ;
     }

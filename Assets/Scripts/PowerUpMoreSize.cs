@@ -1,7 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using static UnityEditor.Experimental.GraphView.GraphView;
 
 public class PowerUpMoreSize : MonoBehaviour
 {
@@ -9,10 +6,8 @@ public class PowerUpMoreSize : MonoBehaviour
     [SerializeField] private GameObject Player1;
     [SerializeField] private GameObject Player2;
     [SerializeField] private GameObject GameManager;
+    [SerializeField] private SpawnablesData SpawnablesData;
 
-    [Header("Setup")]
-    [SerializeField] private float addedHeight;
-    [SerializeField] private float seconds;
 
     private GameManager gameManager;
 
@@ -24,10 +19,10 @@ public class PowerUpMoreSize : MonoBehaviour
     {
         gameObject.SetActive(false);
 
-        Player1.transform.localScale += new Vector3(0, addedHeight, 0);
-        Player2.transform.localScale += new Vector3(0, addedHeight, 0);
+        Player1.transform.localScale += new Vector3(0, SpawnablesData.addedHeight, 0);
+        Player2.transform.localScale += new Vector3(0, SpawnablesData.addedHeight, 0);
 
-        gameManager.MoreSizeCalled(seconds, addedHeight);
+        gameManager.MoreSizeCalled(SpawnablesData.moreSizeSeconds, SpawnablesData.addedHeight);
     }
 
 

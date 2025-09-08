@@ -1,10 +1,6 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine.UI;
 using TMPro;
-using Unity.VisualScripting;
-using System.Threading;
 using UnityEngine.SceneManagement;
 
 
@@ -16,11 +12,14 @@ public class UIPauseMenu : MonoBehaviour
 {
     [Header("References")]
     [SerializeField] private GameObject panelPause;
+    [SerializeField] private UIGame UIGame;
 
     [SerializeField] private Button btnPlay;
     [SerializeField] private Button btnOptions;
     [SerializeField] private Button btnMainMenu;
     [SerializeField] private Button btnExit;
+    [SerializeField] private PlayerData Player1Data;
+    [SerializeField] private PlayerData Player2Data;
     [SerializeField] private GameObject Player1;
     [SerializeField] private GameObject Player2;
     [SerializeField] private GameObject Ball;
@@ -29,28 +28,20 @@ public class UIPauseMenu : MonoBehaviour
     [Header("Player 1")]
     [SerializeField] private TextMeshProUGUI player1SpeedText;
     [SerializeField] private Slider sliderSpeedPlayer1;
-    private PlayerMovement playerMovement;
 
     [Header("Player 2")]
     [SerializeField] private TextMeshProUGUI player2SpeedText;
     [SerializeField] private Slider sliderSpeedPlayer2;
-    private PlayerMovement player2Movement;
 
     [Header("Color Settings")]
     [Header("Player 1")]
-    [SerializeField] private TextMeshProUGUI player1RedText;
     [SerializeField] private Slider sliderRedPlayer1;
-    [SerializeField] private TextMeshProUGUI player1GreenText;
     [SerializeField] private Slider sliderGreenPlayer1;
-    [SerializeField] private TextMeshProUGUI player1BlueText;
     [SerializeField] private Slider sliderBluePlayer1;
 
     [Header("Player 2")]
-    [SerializeField] private TextMeshProUGUI player2RedText;
     [SerializeField] private Slider sliderRedPlayer2;
-    [SerializeField] private TextMeshProUGUI player2GreenText;
     [SerializeField] private Slider sliderGreenPlayer2;
-    [SerializeField] private TextMeshProUGUI player2BlueText;
     [SerializeField] private Slider sliderBluePlayer2;
 
     [Header("Height Settings")]
@@ -74,21 +65,18 @@ public class UIPauseMenu : MonoBehaviour
     {
         player1Sprite = Player1.GetComponent<SpriteRenderer>();
         player2Sprite = Player2.GetComponent<SpriteRenderer>();
-        playerMovement = Player1.GetComponent<PlayerMovement>();
-        player2Movement = Player2.GetComponent<PlayerMovement>();
-
 
         // Inicializar valores minimos y máximos de sliders de velocidad
-        sliderSpeedPlayer1.minValue = 100f;
-        sliderSpeedPlayer1.maxValue = 200f;
-        sliderSpeedPlayer2.minValue = 100f;
-        sliderSpeedPlayer2.maxValue = 200f;
+        sliderSpeedPlayer1.minValue = 50f;
+        sliderSpeedPlayer1.maxValue = 100f;
+        sliderSpeedPlayer2.minValue = 50f;
+        sliderSpeedPlayer2.maxValue = 100f;
 
         //Valor de velocidad inicial del slider de velocidad
-        sliderSpeedPlayer1.value = playerMovement.velocity / 100;
-        sliderSpeedPlayer2.value = player2Movement.velocity / 100;
-        player1SpeedText.text = (playerMovement.velocity / 100).ToString();
-        player2SpeedText.text = (playerMovement.velocity / 100).ToString();
+        sliderSpeedPlayer1.value = Player1Data.velocity / 100;
+        sliderSpeedPlayer2.value = Player2Data.velocity / 100;
+        player1SpeedText.text = (Player1Data.velocity / 100).ToString();
+        player2SpeedText.text = (Player2Data.velocity / 100).ToString();
 
         // Inicializar valores minimos y máximos de los sliders de altura
         sliderHeightPlayer1.minValue = 1;
@@ -139,7 +127,7 @@ public class UIPauseMenu : MonoBehaviour
         ChangePlayerSpeed();
         ChangePlayerColor();
         ChangePlayerHeight();
-        if (Input.GetKeyDown(KeyCode.Escape))
+        if (Input.GetKeyDown(KeyCode.Escape) && UIGame.justScored == false)
         {   
             TogglePause();
         }
@@ -158,11 +146,11 @@ public class UIPauseMenu : MonoBehaviour
     {
         //Cambia la velocidad del Player 1/2 deslizando el slider, también el valor del texto asociado.
         sliderSpeedPlayer1.onValueChanged.AddListener((v) => {
-            playerMovement.velocity = v * 100;
+            Player1Data.velocity = v * 100;
             player1SpeedText.text = v.ToString();
         });
         sliderSpeedPlayer2.onValueChanged.AddListener((v) => {
-            player2Movement.velocity = v * 100;
+            Player2Data.velocity = v * 100;
             player2SpeedText.text = v.ToString();
         });
     }

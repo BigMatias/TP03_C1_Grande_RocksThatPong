@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class PowerUpDefense : MonoBehaviour
@@ -8,11 +6,10 @@ public class PowerUpDefense : MonoBehaviour
     [SerializeField] private GameObject DefenseRockP1;
     [SerializeField] private GameObject DefenseRockP2;
     [SerializeField] private GameObject GameManager;
-
-    [Header("How long does it last")]
-    [SerializeField] private float seconds;
+    [SerializeField] private SpawnablesData SpawnablesData;
 
     private GameManager gameManager;
+
     private void Awake()
     {
         gameManager = GameManager.GetComponent<GameManager>();
@@ -26,11 +23,11 @@ public class PowerUpDefense : MonoBehaviour
 
         DefenseRockP1.gameObject.SetActive(true);
         DefenseRockP1.transform.position = new Vector3(-8.1f, yLocationP1);
-        gameManager.DefenseCalled(seconds, DefenseRockP1);
+        gameManager.DefenseCalled(SpawnablesData.defenseSeconds, DefenseRockP1);
 
         DefenseRockP2.gameObject.SetActive(true);
         DefenseRockP2.transform.position = new Vector3(8.15f, yLocationP2);
 
-        gameManager.DefenseCalled(seconds, DefenseRockP2);
+        gameManager.DefenseCalled(SpawnablesData.defenseSeconds, DefenseRockP2);
     }
 }
